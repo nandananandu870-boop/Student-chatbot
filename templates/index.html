@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Chatbot</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f9; text-align: center; }
+        #chatbox { width: 50%; margin: auto; border: 2px solid #ccc; padding: 20px; border-radius: 10px; background: white; }
+        .msg { margin: 10px 0; }
+        .user { text-align: right; color: blue; }
+        .bot { text-align: left; color: green; }
+    </style>
+</head>
+<body>
+    <h2>🤖 Student Chatbot</h2>
+    <div id="chatbox"></div>
+    <br>
+    <input type="text" id="user_input" placeholder="Type your message..." style="width:40%;">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        function sendMessage() {
+            let userText = document.getElementById("user_input").value;
+            if (userText.trim() === "") return;
+
+            let chatbox = document.getElementById("chatbox");
+            chatbox.innerHTML += "<div class='msg user'><b>You:</b> " + userText + "</div>";
+
+            fetch("/get", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: "msg=" + userText
+            })
+            .then(response => response.text())
+            .then(data => {
+                chatbox.innerHTML += "<div class='msg bot'><b>Bot:</b> " + data + "</div>";
+                document.getElementById("user_input").value = "";
+                chatbox.scrollTop = chatbox.scrollHeight;
+            });
+        }
+    </script>
+</body>
+</html>
